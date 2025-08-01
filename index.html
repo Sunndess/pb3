@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/public/img/LOGO_CORTO.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Gestión de Casos Legales</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Sistema de Gestión de Casos Legales - Administra y organiza tus casos legales de manera eficiente." />
+    <meta name="keywords" content="gestión, casos legales, administración, abogados, sistema" />
+    <meta name="author" content="Gestión Educativa" />
+    <meta property="og:title" content="Sistema de Gestión de Casos Legales" />
+    <meta property="og:description" content="Administra y organiza tus casos legales de manera eficiente con nuestro sistema." />
+    <meta property="og:image" content="/public/img/LOGO.png" />
+    <meta property="og:url" content="https://iuris.ge.pe/" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <!-- Vite expone automáticamente las variables que comienzan con VITE_ al frontend. 
+         Para comprobar que funcionan, puedes usar import.meta.env en tu código JS/TS. -->
+    <script>
+      // Solo para depuración en desarrollo, elimina en producción
+      if (import.meta.env && import.meta.env.DEV) {
+        console.log('VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
+        // Puedes comprobar otras variables aquí si lo deseas
+      }
+    </script>
+    <!-- Google API & Identity scripts (valores desde .env vía import.meta.env) -->
+    <script
+      src="https://apis.google.com/js/api.js"
+      async
+      defer
+    ></script>
+    <script
+      src="https://accounts.google.com/gsi/client"
+      async
+      defer
+    ></script>
+    <script>
+      // Exponer las variables de entorno para uso en JS si es necesario
+      window.GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
+      window.GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    </script>
+  </body>
+</html>
