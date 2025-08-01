@@ -4,6 +4,7 @@ import { Card } from '../ui/Card';
 import { CaseAction } from '../../types';
 import { Badge } from '../ui/Badge';
 import { CaseDetailView } from '../cases/CaseDetailView';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 interface RecentActivityTableProps {
   actions: CaseAction[];
@@ -39,7 +40,7 @@ export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({
   const [caseMap, setCaseMap] = useState<Record<string, string>>({});
   const [subjectMap, setSubjectMap] = useState<Record<string, { case_id: string }>>({});
   const [selectedCase, setSelectedCase] = useState<string | null>(null);
-  const [caseData, setCaseData] = useState(null);
+  const [caseData, setCaseData] = useState<any>(null);
 
   useEffect(() => {
     (async () => {
@@ -113,7 +114,7 @@ export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(
         'https://zgmrhchehyqsdixizylu.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpnbXJoY2hlaHlxc2RpeGl6eWx1Iiwicm9zZSI6ImFub24iLCJpYXQiOjE3NDU0MTU3NzYsImV4cCI6MjA2MDk5MTc3Nn0.TOjnPnCASrfNradzGlqe4uCrhGLlhudB8jDz_0xVGfI'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpnbXJoY2hlaHlxc2RpeGl6eWx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0MTU3NzYsImV4cCI6MjA2MDk5MTc3Nn0.TOjnPnCASrfNradzGlqe4uCrhGLlhudB8jDz_0xVGfI'
       );
 
       const { data, error } = await supabase
@@ -122,7 +123,10 @@ export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({
           *,
           case_subjects(
             *,
-            case_actions(*)
+            case_actions(
+              *,
+              users!case_actions_specialist_id_fkey(name)
+            )
           )
         `)
         .eq('id', caseId)
@@ -131,6 +135,19 @@ export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({
       if (error) {
         console.error('Error fetching case data:', error.message);
         return;
+      }
+
+      // Map specialist names to actions
+      if (data?.case_subjects) {
+        data.case_subjects.forEach((subject: any) => {
+          if (subject.case_actions) {
+            subject.case_actions.forEach((action: any) => {
+              if (action.users && action.users.name) {
+                action.specialist = action.users.name;
+              }
+            });
+          }
+        });
       }
 
       setCaseData(data);
@@ -246,7 +263,10 @@ export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({
               <h3 className="text-xl font-semibold text-gray-800">Detalle del Caso</h3>
               <button
                 className="text-gray-400 hover:text-gray-700 rounded-full p-1 focus:outline-none"
-                onClick={() => setSelectedCase(null)}
+                onClick={() => {
+                  setSelectedCase(null);
+                  window.location.reload(); // Reload the page when the modal is closed
+                }}
                 aria-label="Cerrar"
                 type="button"
               >
@@ -258,7 +278,10 @@ export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({
             <div className="p-6 overflow-y-auto flex-1">
               <CaseDetailView
                 caseData={caseData}
-                onBack={() => setSelectedCase(null)}
+                onBack={() => {
+                  setSelectedCase(null);
+                  window.location.reload(); // Reload the page when the modal is closed
+                }}
                 onAddNote={() => {}}
               />
             </div>
