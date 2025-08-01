@@ -343,7 +343,8 @@ export default function Calendar() {
   const handleCaseDetailClose = () => {
     setSelectedActionId(null);
     setIsCaseDetailModalOpen(false);
-    setCaseData(null); // Reset case data
+    setCaseData(null);
+    window.location.reload(); // Reload the page when the modal is closed
   };
 
   const login = useGoogleLogin({
