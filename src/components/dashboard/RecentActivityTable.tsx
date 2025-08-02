@@ -137,17 +137,27 @@ export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({
         return;
       }
 
-      // Map specialist names to actions
+      // Find the specific action that was clicked
+      const clickedAction = actions.find(a => a.case_subject_id === caseSubjectId);
+      
+      // Filter to include only the selected action and its subject
       if (data?.case_subjects) {
-        data.case_subjects.forEach((subject: any) => {
-          if (subject.case_actions) {
-            subject.case_actions.forEach((action: any) => {
-              if (action.users && action.users.name) {
-                action.specialist = action.users.name;
+        data.case_subjects = data.case_subjects
+          .map((subject: any) => ({
+            ...subject,
+            case_actions: subject.case_actions?.filter((action: any) => {
+              // Only include the specific action that was clicked
+              if (clickedAction && action.id === clickedAction.id) {
+                // Map specialist name if available
+                if (action.users && action.users.name) {
+                  action.specialist = action.users.name;
+                }
+                return true;
               }
-            });
-          }
-        });
+              return false;
+            }),
+          }))
+          .filter((subject: any) => (subject.case_actions?.length ?? 0) > 0);
       }
 
       setCaseData(data);
